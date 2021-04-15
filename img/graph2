@@ -1,0 +1,16 @@
+graph G {
+	1 -- 2
+	2 -- 3
+	3 -- 4
+	4 -- 1
+	1 -- 5
+	2 -- 5
+	3 -- 5
+	4 -- 5
+	1 [fillcolor="#42aa11" style=filled]
+	2 [fillcolor="#03311e" style=filled]
+	3 [fillcolor="#42aa11" style=filled]
+	4 [fillcolor="#bf65a3" style=filled]
+	5 [fillcolor="#8f3b9f" style=filled]
+	fill="#d9d9d9" style=filled
+}
