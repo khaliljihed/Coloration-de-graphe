@@ -7,10 +7,10 @@ graph G {
 	2 -- 5
 	3 -- 5
 	4 -- 5
-	1 [fillcolor="#42aa11" style=filled]
-	2 [fillcolor="#03311e" style=filled]
-	3 [fillcolor="#42aa11" style=filled]
-	4 [fillcolor="#bf65a3" style=filled]
-	5 [fillcolor="#8f3b9f" style=filled]
+	1 [fillcolor="#d2be4c" style=filled]
+	2 [fillcolor="#8a3317" style=filled]
+	3 [fillcolor="#d2be4c" style=filled]
+	4 [fillcolor="#8a3317" style=filled]
+	5 [fillcolor="#8a601b" style=filled]
 	fill="#d9d9d9" style=filled
 }

@@ -43,6 +43,7 @@ def maximum(x,y) :
 #Cette fonction génère un graph aléatoire, connexe et sans cycle 
 #Ce graphe n'est pas forcément planaire
 def arbitaryGraph(nodes, numberEdges):
+    
     l=list(range(1,nodes+1))
     #S est l'ensemble des noeuds non connéctés 
     #T est l'ensemble des noeuds connectés 
@@ -90,7 +91,7 @@ def edgeInsert():
                 assert l1>0 and c1>0
                 L =str(l1)+' '+str(c1)
                 L2=str(c1)+' '+str(l1)
-                assert(L not in listNoeud) and (L2 not in listNoeud)# and((l1<=maxi+1 and c1<=maxi) or(l1<=maxi and c1<=maxi+1))
+                assert(L not in listNoeud) and (L2 not in listNoeud) and((l1!=c1))
             except:
                 if (l1==c1):
                     insertError('Il ne faut pas avoir de cycle')
@@ -135,6 +136,7 @@ def afficherGraph():
     photo = ImageTk.PhotoImage(image)
     canvas.create_image(0,0, anchor=NW, image=photo)
     graphColorFinal()      
+
 
 def calculnodesnumber(l):
     ls=[]
@@ -195,30 +197,30 @@ def graphColorAlgorithm():
         mat[y][x]=1
     #print(mat)
     #la fitness d'un noeud est le nombre de noeuds voisin ayant la même couleur que lui
-    #ainsi la fitness d'un noeud est donée par "color_neighbors[i].count(color[i])"
+    #ainsi la fitness d'un noeud est donée par "neighborColors[i].count(color[i])"
     #la fitness du graphe est le maximum des ftness de tout ses noeuds
     done=False
-    color_neighbors=[] 
+    neighborColors=[] 
     for i in range(nodes):
-        color_neighbors.append([])
+        neighborColors.append([])
     while(not done):
         for i in range(nodes):
-            color_neighbors[i]=[]
+            neighborColors[i]=[]
             for j in range(nodes):
                 if mat[i][j]==1:
-                    color_neighbors[i].append(color[j]) 
+                    neighborColors[i].append(color[j]) 
         max=0
         indexMax=-1
         for i in range(nodes):
-            if max<color_neighbors[i].count(color[i]):
-                max=color_neighbors[i].count(color[i])
+            if max<neighborColors[i].count(color[i]):
+                max=neighborColors[i].count(color[i])
                 indexMax=i
         if indexMax==-1:
             done=True # if no node have same color as its neighbors than done!
         else:
             color[indexMax]=color[indexMax]-1 # else node change its color
     print(color)
-    print(color_neighbors)
+    print(neighborColors)
     return color
 
 
@@ -246,54 +248,43 @@ def graphColorAlgorithmMPSO():
         mat[y][x]=1
     #print(mat)
     #la fitness d'un noeud est le nombre de noeuds voisin ayant la même couleur que lui
-    #ainsi la fitness d'un noeud est donée par "color_neighbors[i].count(color[i])"
+    #ainsi la fitness d'un noeud est donée par "neighborColors[i].count(color[i])"
     #la fitness du graphe est le maximum des ftness de tout ses noeuds
-    done=False
-    color_neighbors=[] 
+    test=False
+    neighborColors=[] 
     for i in range(nodes):
-        color_neighbors.append([])
+        neighborColors.append([])
+        
+        
     V=[0 for i in range(nodes)]
-    w=0.7  #le coefficient dâ€™inertie qui contrÃ´le la contribution de la vÃ©locitÃ©
-    c1=0.3 #coefficient en rapport avec pbest
-    c2=0.4 #coefficient en rapport avec gbest
-    while(not done):
+    w=0.7  #le coefficient d'inertie en relation avec la vélocité
+    c1=0.3 
+    c2=0.4 
+   
+    while(not test):
         for i in range(nodes):
-            color_neighbors[i]=[]
+            neighborColors[i]=[]
             for j in range(nodes):
                 if mat[i][j]==1:
-                    color_neighbors[i].append(color[j]) 
+                    neighborColors[i].append(color[j]) 
         for i in range(len(color)):
             L=liste_voisin(i+1)
             g=random.choice(L)-1
             rand=random.random()
-            V[i]=w*V[i]+c1*rand*(color_neighbors[i].count(color[i])-color[i])+c2*rand*(color[g]-color[i])
+            V[i]=w*V[i]+c1*rand*(neighborColors[i].count(color[i])-color[i])+c2*rand*(color[g]-color[i])
             color[i]= (color[i]+f(V[i],rand))%4
         for i in range(nodes):
-            color_neighbors[i]=[]
+            neighborColors[i]=[]
             for j in range(nodes):
                 if mat[i][j]==1:
-                    color_neighbors[i].append(color[j]) 
+                    neighborColors[i].append(color[j]) 
         max=0
         for i in range(nodes):
-            if max<color_neighbors[i].count(color[i]):
-                max=color_neighbors[i].count(color[i])
-        print("**********************************")
-        print(color)
-        print(color_neighbors)
+            if max<neighborColors[i].count(color[i]):
+                max=neighborColors[i].count(color[i])
         if (max==0):
-            done=True
-
-        '''
-        max=0
-        indexMax=-1
-        for i in range(nodes):
-            if max<color_neighbors[i].count(color[i]):
-                max=color_neighbors[i].count(color[i])
-                indexMax=i
-        if indexMax==-1:
-            done=True # if no node have same color as its neighbors than done!
-        else:
-            color[indexMax]=color[indexMax]-1 # else node change its color'''
+            test=True
+    
     for i in range(len(color)):
         color[i]+=1
     print(color)
@@ -345,8 +336,8 @@ def graphColorFinal():
     canvas.pack()  
     photo1 = ImageTk.PhotoImage(image1)
     canvas.create_image(0,0, anchor=NW, image=photo1)
-    insertHint("Nombre chromatique = "+str( max(color)+1))
-            
+    insertHint("Nombre chromatique = "+ str(len( set(color))))            
+    
 #this function prints and returns the operation choice
 def genererGraphAleatoire():
     global listNoeud
@@ -368,7 +359,6 @@ def genererGraphAleatoire():
             assert l2>0 and l2-2<c2<((l2*(l2-1)/2)+1)
         except:
             insertError("Nombre d'arcs maximal est {nm}:".format(nm= l2*(l2-1)/2))
-            reset()
             return
         listNoeud=arbitaryGraph(l2,c2)
     afficherGraph()
@@ -379,21 +369,21 @@ def onOperationSelection(value):
         frame22Bis1.forget()
         frame22.pack(fill="x" ,pady=(0,6))
         frame21.forget()
-        insertHint('Insérer les arêtes ligne par ligne, les aretes doivent etre ordonnées el graphe connexe ')
+        insertHint('Insérer les arêtes ligne par ligne, les aretes doivent etre ordonnées et le graphe connexe ')
 
     elif (value=='Générer un graphe aléatoire' ):
         frame22.forget()
         frame22Bis1.forget()
         frame22Bis.pack(fill="x" ,pady=(0,6))
         frame21.forget()
-        insertHint('Lecture du graphe à partir du fichier graphe.txt ')
+        insertHint('La fonction genererGraphAleatoire génerera le graphe voulu')
     elif ( value=="MPSO"):
         frame22.forget()
 
         frame22Bis1.pack(fill="x" ,pady=(0,6))
         frame21.forget()
         frame22Bis.forget()
-
+        insertHint('Lecture du graphe à partir du fichier graphe.txt ')
 #this function takes the Error text (String) and display in it's section
 def insertError(ErrorString):
     ErrorStringV.set(ErrorString)
